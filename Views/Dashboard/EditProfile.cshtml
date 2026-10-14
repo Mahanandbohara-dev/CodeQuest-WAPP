@@ -1,0 +1,64 @@
+@using CodeQuest.Controllers
+@model EditProfileViewModel
+@{
+    var countries = AccountController.GetCountryList();
+}
+
+<div class="auth-section">
+    <div class="auth-card" style="max-width: 580px;">
+        <div class="auth-header">
+            <span class="auth-tag">ACCOUNT SETTINGS</span>
+            <h1>Edit Your Profile</h1>
+            <p>Update your email address, physical location, and country details.</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(string.Empty) && ViewData.ModelState[string.Empty]!.Errors.Count > 0)
+        {
+            <div class="toast toast-error" style="position: static; margin-bottom: 1rem; width: 100%;">
+                <span>⚠</span> @ViewData.ModelState[string.Empty]!.Errors[0].ErrorMessage
+            </div>
+        }
+
+        <form method="post" asp-action="EditProfile" class="auth-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Username">Username (Fixed)</label>
+                <input asp-for="Username" readonly style="opacity: 0.75; cursor: not-allowed; background: rgba(255,255,255,0.05);" />
+                <small class="text-muted" style="font-size: 0.8rem; margin-top: 0.25rem;">Usernames are permanently linked to your achievements and score records.</small>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" placeholder="name@example.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="field-validation" style="color: #f87171; font-size: 0.85rem;"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Address">Address / City</label>
+                    <input asp-for="Address" placeholder="e.g. Kathmandu, Bagmati" />
+                    <span asp-validation-for="Address" class="field-validation" style="color: #f87171; font-size: 0.85rem;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Country">Country</label>
+                    <select asp-for="Country">
+                        <option value="">-- Select Country --</option>
+                        @foreach (var c in countries)
+                        {
+                            <option value="@c">@c</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Country" class="field-validation" style="color: #f87171; font-size: 0.85rem;"></span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="button primary" style="flex: 1;" type="submit">Save Changes</button>
+                <a href="/Dashboard" class="button secondary" style="flex: 1; text-align: center;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

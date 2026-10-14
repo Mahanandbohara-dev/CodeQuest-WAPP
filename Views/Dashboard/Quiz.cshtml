@@ -1,0 +1,150 @@
+@model QuizViewModel
+
+<div class="quiz-container">
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-warning">
+            <p>@ViewBag.Message</p>
+            <a href="/Dashboard" class="button secondary compact" style="margin-top: 15px;">← Return to Dashboard</a>
+        </div>
+    }
+    else if (Model.Questions == null || Model.Questions.Count == 0)
+    {
+        <div class="alert alert-warning">
+            <p>No questions currently loaded for @Model.Language.</p>
+            <a href="/Dashboard" class="button secondary compact" style="margin-top: 15px;">← Return to Dashboard</a>
+        </div>
+    }
+    else
+    {
+        <div class="quiz-header-bar">
+            <div class="quiz-meta-info">
+                <span class="quiz-lang-tag">@Model.Language</span>
+                <span class="quiz-count-tag">@Model.Questions.Count Questions</span>
+            </div>
+            <div class="timer-badge" id="timerBadge">
+                <span class="timer-icon">⏱</span>
+                <span id="quizTimer">60</span>s left
+            </div>
+        </div>
+
+        <form method="post" asp-action="SubmitQuiz" id="quizSessionForm" class="quiz-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Language" value="@Model.Language" />
+
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var q = Model.Questions[i];
+                <div class="question-block" id="qBlock_@i">
+                    <div class="question-meta">
+                        <span class="q-number">Question @(i + 1) of @Model.Questions.Count</span>
+                        <span class="q-diff @q.Difficulty.ToLower()">@q.Difficulty</span>
+                    </div>
+
+                    <h2 class="question-text">@q.Question</h2>
+
+                    <input type="hidden" name="Answers[@i].QuestionId" value="@q.Id" />
+
+                    <div class="options-group">
+                        <label class="option-label">
+                            <input type="radio" name="Answers[@i].SelectedOption" value="A" required />
+                            <div class="option-box">
+                                <span class="opt-letter">A</span>
+                                <span class="opt-text">@q.OptionA</span>
+                            </div>
+                        </label>
+
+                        <label class="option-label">
+                            <input type="radio" name="Answers[@i].SelectedOption" value="B" />
+                            <div class="option-box">
+                                <span class="opt-letter">B</span>
+                                <span class="opt-text">@q.OptionB</span>
+                            </div>
+                        </label>
+
+                        <label class="option-label">
+                            <input type="radio" name="Answers[@i].SelectedOption" value="C" />
+                            <div class="option-box">
+                                <span class="opt-letter">C</span>
+                                <span class="opt-text">@q.OptionC</span>
+                            </div>
+                        </label>
+
+                        <label class="option-label">
+                            <input type="radio" name="Answers[@i].SelectedOption" value="D" />
+                            <div class="option-box">
+                                <span class="opt-letter">D</span>
+                                <span class="opt-text">@q.OptionD</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- AI Tutor Hint Accordion -->
+                    <div class="ai-hint-wrapper">
+                        <button type="button" class="ai-hint-btn" onclick="toggleAndAskAi(@i, '@q.Language', @System.Text.Json.JsonSerializer.Serialize(q.Question))">
+                            <span>✦ AI Tutor Hint</span>
+                        </button>
+                        <div class="ai-hint-content" id="aiHintContent_@i" style="display: none;">
+                            <div class="ai-hint-bubble" id="aiHintText_@i">
+                                Click to receive a concept hint without spoiling the answer.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="quiz-footer-actions">
+                <a href="/Dashboard" class="button secondary" onclick="return confirm('Exit quiz? Current progress will not be saved.');">Cancel</a>
+                <button type="submit" class="button primary">Submit All Answers →</button>
+            </div>
+        </form>
+    }
+</div>
+
+@section Scripts {
+<script>
+    let timeLeft = 60 * (@Model.Questions?.Count ?? 1);
+    const timerElem = document.getElementById('quizTimer');
+    const formElem = document.getElementById('quizSessionForm');
+
+    if (timerElem && formElem) {
+        const interval = setInterval(() => {
+            timeLeft--;
+            timerElem.textContent = timeLeft;
+            if (timeLeft <= 10) {
+                document.getElementById('timerBadge').classList.add('timer-warning');
+            }
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                alert("Time is up! Submitting your answers.");
+                formElem.submit();
+            }
+        }, 1000);
+    }
+
+    async function toggleAndAskAi(index, topic, question) {
+        const content = document.getElementById(`aiHintContent_${index}`);
+        const bubble = document.getElementById(`aiHintText_${index}`);
+        
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            return;
+        }
+
+        content.style.display = "block";
+        bubble.textContent = "Asking AI tutor for conceptual hints...";
+
+        try {
+            const res = await fetch("/Ai/Ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ topic: topic, question: question })
+            });
+            const data = await res.json();
+            bubble.textContent = data.answer || "No hint available.";
+        } catch (e) {
+            bubble.textContent = "Could not load AI tutor hint.";
+        }
+    }
+</script>
+}

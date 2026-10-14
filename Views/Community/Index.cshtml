@@ -1,0 +1,125 @@
+@model List<LeaderboardUserViewModel>
+@{
+    var search = (string?)ViewBag.Search;
+    var currentCountry = (string?)ViewBag.Country;
+    var countryList = (List<string>?)ViewBag.CountryList ?? new List<string>();
+}
+
+<div class="community-page">
+    <div class="page-header">
+        <span class="auth-tag">COMMUNITY & LEADERBOARD</span>
+        <h1>Hall of Code Questers</h1>
+        <p>Celebrate top learners from across the globe, track rankings, and compare streaks.</p>
+    </div>
+
+    <!-- Top 3 Podium Highlights -->
+    @if (Model != null && Model.Count >= 3 && string.IsNullOrEmpty(search) && string.IsNullOrEmpty(currentCountry))
+    {
+        <div class="podium-grid">
+            <!-- 2nd Place -->
+            <div class="podium-card rank-2">
+                <span class="podium-medal">🥈 2nd</span>
+                <div class="podium-avatar">@Model[1].Username.Substring(0, 1).ToUpper()</div>
+                <h3>@Model[1].Username</h3>
+                <span class="podium-country">📍 @Model[1].Country</span>
+                <strong class="podium-score">@Model[1].TotalScore pts</strong>
+                <small>🔥 @Model[1].CurrentStreak days • 🏅 @Model[1].BadgesCount badges</small>
+            </div>
+
+            <!-- 1st Place -->
+            <div class="podium-card rank-1">
+                <span class="podium-medal">👑 1st Champion</span>
+                <div class="podium-avatar champ">@Model[0].Username.Substring(0, 1).ToUpper()</div>
+                <h3>@Model[0].Username</h3>
+                <span class="podium-country">📍 @Model[0].Country</span>
+                <strong class="podium-score">@Model[0].TotalScore pts</strong>
+                <small>🔥 @Model[0].CurrentStreak days • 🏅 @Model[0].BadgesCount badges</small>
+            </div>
+
+            <!-- 3rd Place -->
+            <div class="podium-card rank-3">
+                <span class="podium-medal">🥉 3rd</span>
+                <div class="podium-avatar">@Model[2].Username.Substring(0, 1).ToUpper()</div>
+                <h3>@Model[2].Username</h3>
+                <span class="podium-country">📍 @Model[2].Country</span>
+                <strong class="podium-score">@Model[2].TotalScore pts</strong>
+                <small>🔥 @Model[2].CurrentStreak days • 🏅 @Model[2].BadgesCount badges</small>
+            </div>
+        </div>
+    }
+
+    <!-- Filter & Search Toolbar -->
+    <div class="filter-toolbar card">
+        <form method="get" class="filter-form">
+            <div class="filter-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="search" value="@search" placeholder="Search learner by username..." />
+            </div>
+
+            <div class="filter-select-wrap">
+                <select name="country">
+                    <option value="">All Countries</option>
+                    @foreach (var c in countryList)
+                    {
+                        <option value="@c" selected="@(c == currentCountry)">@c</option>
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="button primary compact">Filter</button>
+            @if (!string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(currentCountry))
+            {
+                <a href="/Community" class="button secondary compact">Reset</a>
+            }
+        </form>
+    </div>
+
+    <!-- Complete Learners Table (like Landing.aspx) -->
+    <div class="table-card">
+        <table class="data-table leaderboard-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Rank</th>
+                    <th>Learner</th>
+                    <th>Country</th>
+                    <th>Role</th>
+                    <th>Score</th>
+                    <th>Streak</th>
+                    <th>Badges</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No learners found matching your criteria.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr class="@(user.Rank <= 3 ? "highlight-row" : "")">
+                            <td>
+                                <span class="rank-badge rank-@user.Rank">
+                                    @(user.Rank switch { 1 => "🥇 1", 2 => "🥈 2", 3 => "🥉 3", _ => $"#{user.Rank}" })
+                                </span>
+                            </td>
+                            <td>
+                                <div class="user-inline-info">
+                                    <div class="user-tiny-avatar">@user.Username.Substring(0, 1).ToUpper()</div>
+                                    <span class="user-strong-name">@user.Username</span>
+                                </div>
+                            </td>
+                            <td><span class="country-tag">📍 @user.Country</span></td>
+                            <td><span class="role-pill @(user.Role == "Administrator" ? "role-admin" : "role-learner")">@user.Role</span></td>
+                            <td><strong class="score-color">@user.TotalScore pts</strong></td>
+                            <td><span>🔥 @user.CurrentStreak days</span></td>
+                            <td><span>🏅 @user.BadgesCount</span></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,120 @@
+@model RegisterViewModel
+@{
+    var countries = (List<string>?)ViewBag.Countries ?? AccountController.GetCountryList();
+}
+
+<section class="auth-section">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-tag">START YOUR JOURNEY</span>
+            <h1>Create Account</h1>
+            <p>Join the CodeQuest community to practice, track streaks, and earn badges.</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-error">
+                <span>⚠</span> @ViewBag.Error
+            </div>
+        }
+
+        <form method="post" asp-action="Register" class="auth-form">
+            @Html.AntiForgeryToken()
+
+            <!-- Account Role Selection -->
+            <div class="form-group">
+                <label>Account Type</label>
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.4rem; padding: 0.5rem 0.75rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: normal; color: #f1f5f9;">
+                        <input type="radio" asp-for="Role" value="Learner" id="roleLearner" checked onchange="toggleAdminKey(false)" />
+                        <span>Learner (Default)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: normal; color: #f1f5f9;">
+                        <input type="radio" asp-for="Role" value="Administrator" id="roleAdmin" onchange="toggleAdminKey(true)" />
+                        <span>Administrator 🛡️</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Admin Passcode Field (Shown when Administrator is selected) -->
+            <div class="form-group" id="adminSecretGroup" style="display: none; background: rgba(59, 130, 246, 0.08); padding: 0.85rem 1rem; border-radius: 8px; border: 1px dashed rgba(59, 130, 246, 0.4);">
+                <label asp-for="AdminSecretKey" style="color: #93c5fd; font-weight: 600;">Admin Security Passcode</label>
+                <input asp-for="AdminSecretKey" type="password" placeholder="Enter admin passcode (demo: admin123)" autocomplete="off" />
+                <small style="color: #94a3b8; font-size: 0.8rem; display: block; margin-top: 0.35rem;">
+                    Required for administrator role authorization. (Default demo passcode: <code>admin123</code>)
+                </small>
+                <span asp-validation-for="AdminSecretKey" class="field-validation"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" placeholder="e.g. prabit_coder" autocomplete="username" />
+                <span asp-validation-for="Username" class="field-validation"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" placeholder="name@example.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="field-validation"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Address">Address / City</label>
+                    <input asp-for="Address" placeholder="e.g. Pepsicola, Kathmandu" />
+                    <span asp-validation-for="Address" class="field-validation"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Country">Country</label>
+                    <select asp-for="Country">
+                        <option value="">-- Select Country --</option>
+                        @foreach (var c in countries)
+                        {
+                            <option value="@c">@c</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Country" class="field-validation"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" type="password" placeholder="At least 6 characters" autocomplete="new-password" />
+                    <span asp-validation-for="Password" class="field-validation"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="Repeat password" autocomplete="new-password" />
+                    <span asp-validation-for="ConfirmPassword" class="field-validation"></span>
+                </div>
+            </div>
+
+            <button class="button primary block" type="submit">Create Account →</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/Account/Login">Log in here</a></p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    function toggleAdminKey(isAdmin) {
+        const group = document.getElementById('adminSecretGroup');
+        if (group) {
+            group.style.display = isAdmin ? 'block' : 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const adminRadio = document.getElementById('roleAdmin');
+        if (adminRadio && adminRadio.checked) {
+            toggleAdminKey(true);
+        }
+    });
+</script>
+}

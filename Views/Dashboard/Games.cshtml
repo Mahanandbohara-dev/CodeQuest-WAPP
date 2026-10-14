@@ -1,0 +1,356 @@
+@{
+    ViewData["Title"] = "Relaxing Mini-Games";
+}
+
+<div class="dashboard-page">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="auth-tag">LEARNER RELAXATION ZONE</span>
+            <h1>Brain Breaks & Mini-Games</h1>
+            <p>Take a relaxing breather between coding quiz sessions to sharpen your memory and problem-solving skills.</p>
+        </div>
+        <div>
+            <a href="/Dashboard" class="button secondary compact">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Game Switcher Tabs -->
+    <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem;">
+        <button id="tabMemoryBtn" class="button primary" onclick="switchGame('memory')">🎴 Code Memory Match</button>
+        <button id="tabPuzzleBtn" class="button secondary" onclick="switchGame('puzzle')">🧩 Sliding Number Puzzle</button>
+    </div>
+
+    <!-- GAME 1: MEMORY MATCH -->
+    <div id="memoryGameSection" class="card" style="padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="margin: 0; font-size: 1.5rem;">Syntax & Language Memory Match</h2>
+                <p style="margin: 0.25rem 0 0; color: #94a3b8; font-size: 0.9rem;">Flip the cards and match the programming languages & tools.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="font-size: 1rem; color: #e2e8f0;">
+                    Moves: <strong id="memoryMoves" style="color: #60a5fa;">0</strong>
+                </div>
+                <div style="font-size: 1rem; color: #e2e8f0;">
+                    Matches: <strong id="memoryMatches" style="color: #34d399;">0 / 8</strong>
+                </div>
+                <div style="font-size: 1rem; color: #e2e8f0;">
+                    Time: <strong id="memoryTimer" style="color: #fbbf24;">00:00</strong>
+                </div>
+                <button class="button secondary compact" onclick="initMemoryGame()">🔄 Restart</button>
+            </div>
+        </div>
+
+        <div id="memoryVictoryMsg" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; border-radius: 8px; padding: 1rem; text-align: center; margin-bottom: 1.5rem; color: #86efac;">
+            <h3 style="margin: 0 0 0.5rem;">🎉 Fantastic Memory! You solved the puzzle!</h3>
+            <p style="margin: 0;">Completed in <span id="finalMoves"></span> moves and <span id="finalTime"></span>. Ready to dive back into a quiz?</p>
+        </div>
+
+        <!-- 4x4 Memory Grid -->
+        <div id="memoryBoard" style="display: grid; grid-template-columns: repeat(4, 1fr); max-width: 520px; margin: 0 auto; gap: 12px;">
+            <!-- Generated dynamically via JS -->
+        </div>
+    </div>
+
+    <!-- GAME 2: SLIDING 8-PUZZLE -->
+    <div id="puzzleGameSection" class="card" style="padding: 2rem; display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="margin: 0; font-size: 1.5rem;">Sliding 8-Tile Puzzle</h2>
+                <p style="margin: 0.25rem 0 0; color: #94a3b8; font-size: 0.9rem;">Slide tiles into ascending order from 1 to 8 with the blank space at bottom right.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="font-size: 1rem; color: #e2e8f0;">
+                    Moves: <strong id="puzzleMoves" style="color: #60a5fa;">0</strong>
+                </div>
+                <button class="button secondary compact" onclick="initPuzzleGame()">🔄 Shuffle & Restart</button>
+            </div>
+        </div>
+
+        <div id="puzzleVictoryMsg" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; border-radius: 8px; padding: 1rem; text-align: center; margin-bottom: 1.5rem; color: #86efac;">
+            <h3 style="margin: 0 0 0.5rem;">🏆 Puzzle Solved!</h3>
+            <p style="margin: 0;">Great problem-solving! You arranged all 8 tiles in <span id="finalPuzzleMoves"></span> moves.</p>
+        </div>
+
+        <!-- 3x3 Puzzle Grid -->
+        <div id="puzzleBoard" style="display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); max-width: 324px; margin: 0 auto; gap: 12px; justify-content: center; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <!-- Generated dynamically via JS -->
+        </div>
+    </div>
+</div>
+
+<style>
+    .memory-card {
+        height: 100px;
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .memory-card:hover {
+        transform: translateY(-2px);
+        border-color: #3b82f6;
+    }
+    .memory-card.flipped {
+        background: #0f172a;
+        border-color: #60a5fa;
+    }
+    .memory-card.matched {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: #22c55e;
+        cursor: default;
+    }
+    .memory-card-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 4px;
+        font-weight: 600;
+    }
+    .puzzle-tile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #f8fafc;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #475569;
+        border-radius: 10px;
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        transition: transform 0.15s, background 0.15s;
+    }
+    .puzzle-tile:hover {
+        transform: scale(1.03);
+        border-color: #60a5fa;
+    }
+    .puzzle-tile.empty {
+        background: transparent;
+        border: 2px dashed rgba(255, 255, 255, 0.1);
+        box-shadow: none;
+        cursor: default;
+    }
+</style>
+
+@section Scripts {
+<script>
+    function switchGame(game) {
+        const memSec = document.getElementById('memoryGameSection');
+        const puzSec = document.getElementById('puzzleGameSection');
+        const memBtn = document.getElementById('tabMemoryBtn');
+        const puzBtn = document.getElementById('tabPuzzleBtn');
+
+        if (game === 'memory') {
+            memSec.style.display = 'block';
+            puzSec.style.display = 'none';
+            memBtn.className = 'button primary';
+            puzBtn.className = 'button secondary';
+        } else {
+            memSec.style.display = 'none';
+            puzSec.style.display = 'block';
+            memBtn.className = 'button secondary';
+            puzBtn.className = 'button primary';
+        }
+    }
+
+    /* ========================================================
+       GAME 1: MEMORY MATCH LOGIC
+       ======================================================== */
+    const memoryItems = [
+        { icon: '🐍', label: 'Python' },
+        { icon: '⚡', label: 'JavaScript' },
+        { icon: '☕', label: 'Java' },
+        { icon: '⚙️', label: 'C++' },
+        { icon: '🌐', label: 'HTML' },
+        { icon: '🎨', label: 'CSS' },
+        { icon: '🗄️', label: 'SQL' },
+        { icon: '📦', label: 'Git' }
+    ];
+
+    let memoryCards = [];
+    let flippedCards = [];
+    let memoryMoves = 0;
+    let memoryMatches = 0;
+    let memoryTimerInterval = null;
+    let memorySeconds = 0;
+    let memoryLocked = false;
+
+    function initMemoryGame() {
+        clearInterval(memoryTimerInterval);
+        memorySeconds = 0;
+        memoryMoves = 0;
+        memoryMatches = 0;
+        flippedCards = [];
+        memoryLocked = false;
+
+        document.getElementById('memoryMoves').innerText = '0';
+        document.getElementById('memoryMatches').innerText = '0 / 8';
+        document.getElementById('memoryTimer').innerText = '00:00';
+        document.getElementById('memoryVictoryMsg').style.display = 'none';
+
+        // Duplicate and shuffle
+        const deck = [...memoryItems, ...memoryItems]
+            .map((item, id) => ({ ...item, uniqueId: id }))
+            .sort(() => Math.random() - 0.5);
+
+        const board = document.getElementById('memoryBoard');
+        board.innerHTML = '';
+
+        deck.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.dataset.label = item.label;
+            card.innerHTML = `<span style="font-size: 1.8rem; display: none;">${item.icon}</span><span class="memory-card-label" style="display: none;">${item.label}</span><span style="font-size: 1.5rem; color: #64748b;">❓</span>`;
+            card.onclick = () => flipCard(card, item);
+            board.appendChild(card);
+        });
+
+        memoryTimerInterval = setInterval(() => {
+            memorySeconds++;
+            const m = String(Math.floor(memorySeconds / 60)).padStart(2, '0');
+            const s = String(memorySeconds % 60).padStart(2, '0');
+            document.getElementById('memoryTimer').innerText = `${m}:${s}`;
+        }, 1000);
+    }
+
+    function flipCard(cardEl, item) {
+        if (memoryLocked || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+        cardEl.classList.add('flipped');
+        cardEl.children[0].style.display = 'inline';
+        cardEl.children[1].style.display = 'inline';
+        cardEl.children[2].style.display = 'none';
+        flippedCards.push({ cardEl, item });
+
+        if (flippedCards.length === 2) {
+            memoryMoves++;
+            document.getElementById('memoryMoves').innerText = memoryMoves;
+            memoryLocked = true;
+
+            const [first, second] = flippedCards;
+            if (first.item.label === second.item.label) {
+                // Matched!
+                setTimeout(() => {
+                    first.cardEl.classList.add('matched');
+                    second.cardEl.classList.add('matched');
+                    memoryMatches++;
+                    document.getElementById('memoryMatches').innerText = `${memoryMatches} / 8`;
+                    flippedCards = [];
+                    memoryLocked = false;
+
+                    if (memoryMatches === 8) {
+                        clearInterval(memoryTimerInterval);
+                        document.getElementById('finalMoves').innerText = memoryMoves;
+                        document.getElementById('finalTime').innerText = document.getElementById('memoryTimer').innerText;
+                        document.getElementById('memoryVictoryMsg').style.display = 'block';
+                    }
+                }, 400);
+            } else {
+                // Not matched
+                setTimeout(() => {
+                    first.cardEl.classList.remove('flipped');
+                    first.cardEl.children[0].style.display = 'none';
+                    first.cardEl.children[1].style.display = 'none';
+                    first.cardEl.children[2].style.display = 'inline';
+
+                    second.cardEl.classList.remove('flipped');
+                    second.cardEl.children[0].style.display = 'none';
+                    second.cardEl.children[1].style.display = 'none';
+                    second.cardEl.children[2].style.display = 'inline';
+
+                    flippedCards = [];
+                    memoryLocked = false;
+                }, 900);
+            }
+        }
+    }
+
+    /* ========================================================
+       GAME 2: SLIDING 8-PUZZLE LOGIC
+       ======================================================== */
+    let puzzleState = [1, 2, 3, 4, 5, 6, 7, 8, null];
+    let puzzleMoves = 0;
+
+    function initPuzzleGame() {
+        puzzleMoves = 0;
+        document.getElementById('puzzleMoves').innerText = '0';
+        document.getElementById('puzzleVictoryMsg').style.display = 'none';
+
+        // Generate a guaranteed solvable shuffle by starting from solved state and making valid random moves
+        puzzleState = [1, 2, 3, 4, 5, 6, 7, 8, null];
+        let emptyIndex = 8;
+        for (let step = 0; step < 120; step++) {
+            const neighbors = getNeighbors(emptyIndex);
+            const move = neighbors[Math.floor(Math.random() * neighbors.length)];
+            puzzleState[emptyIndex] = puzzleState[move];
+            puzzleState[move] = null;
+            emptyIndex = move;
+        }
+
+        renderPuzzle();
+    }
+
+    function getNeighbors(idx) {
+        const row = Math.floor(idx / 3);
+        const col = idx % 3;
+        const neighbors = [];
+        if (row > 0) neighbors.push(idx - 3); // Up
+        if (row < 2) neighbors.push(idx + 3); // Down
+        if (col > 0) neighbors.push(idx - 1); // Left
+        if (col < 2) neighbors.push(idx + 1); // Right
+        return neighbors;
+    }
+
+    function renderPuzzle() {
+        const board = document.getElementById('puzzleBoard');
+        board.innerHTML = '';
+
+        puzzleState.forEach((val, idx) => {
+            const tile = document.createElement('div');
+            if (val === null) {
+                tile.className = 'puzzle-tile empty';
+            } else {
+                tile.className = 'puzzle-tile';
+                tile.innerText = val;
+                tile.onclick = () => onTileClick(idx);
+            }
+            board.appendChild(tile);
+        });
+    }
+
+    function onTileClick(clickedIdx) {
+        const emptyIdx = puzzleState.indexOf(null);
+        const neighbors = getNeighbors(emptyIdx);
+
+        if (neighbors.includes(clickedIdx)) {
+            // Swap
+            puzzleState[emptyIdx] = puzzleState[clickedIdx];
+            puzzleState[clickedIdx] = null;
+            puzzleMoves++;
+            document.getElementById('puzzleMoves').innerText = puzzleMoves;
+            renderPuzzle();
+
+            // Check if solved
+            const solved = [1, 2, 3, 4, 5, 6, 7, 8, null];
+            if (puzzleState.every((val, i) => val === solved[i])) {
+                document.getElementById('finalPuzzleMoves').innerText = puzzleMoves;
+                document.getElementById('puzzleVictoryMsg').style.display = 'block';
+            }
+        }
+    }
+
+    // Initialize both games on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        initMemoryGame();
+        initPuzzleGame();
+    });
+</script>
+}

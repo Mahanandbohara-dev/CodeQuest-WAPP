@@ -1,0 +1,4 @@
+wwwroot\js\site.js
+wwwroot\css\site.css
+C:\Users\HP\Downloads\CodeQuest_Visual_Studio_CSharp\CodeQuest_Visual_Studio_CSharp\wwwroot\js\site.js
+C:\Users\HP\Downloads\CodeQuest_Visual_Studio_CSharp\CodeQuest_Visual_Studio_CSharp\wwwroot\css\site.css

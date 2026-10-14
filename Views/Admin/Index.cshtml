@@ -1,0 +1,274 @@
+@model AdminDashboardViewModel
+
+<div class="admin-page">
+    <div class="page-header admin-header">
+        <div>
+            <span class="auth-tag">ADMINISTRATOR CONTROL</span>
+            <h1>Management Console</h1>
+            <p>Direct control over database tables: Users, Questions, Categories, and Activity telemetry.</p>
+        </div>
+    </div>
+
+    <!-- Stats Overview Cards -->
+    <section class="stats-grid">
+        <article class="stat-card">
+            <div class="stat-icon user-icon">👥</div>
+            <div class="stat-content">
+                <small>Registered Users</small>
+                <strong>@Model.TotalUsers</strong>
+                <p class="stat-sub">Across all countries</p>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon question-icon">❓</div>
+            <div class="stat-content">
+                <small>Quiz Questions</small>
+                <strong>@Model.TotalQuestions</strong>
+                <p class="stat-sub">Across 6 languages</p>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon attempt-icon">📊</div>
+            <div class="stat-content">
+                <small>Total Quiz Attempts</small>
+                <strong>@Model.TotalAttempts</strong>
+                <p class="stat-sub">Saved in database</p>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon avg-icon">🎯</div>
+            <div class="stat-content">
+                <small>Average Score</small>
+                <strong>@Model.AverageScore <span>pts</span></strong>
+                <p class="stat-sub">Platform-wide average</p>
+            </div>
+        </article>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'usersTab')">👤 Users Management (@Model.Users.Count)</button>
+        <button class="tab-btn" onclick="switchTab(event, 'questionsTab')">📚 Questions Management (@Model.Questions.Count)</button>
+        <button class="tab-btn" onclick="switchTab(event, 'attemptsTab')">📈 Recent Quiz Attempts</button>
+    </div>
+
+    <!-- TAB 1: USERS MANAGEMENT -->
+    <div id="usersTab" class="tab-pane active">
+        <div class="section-title">
+            <h2>Registered Learners & Administrators</h2>
+            <p>Manage user roles or remove inactive accounts. All changes persist directly to SQL Server.</p>
+        </div>
+
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Country</th>
+                        <th>Role</th>
+                        <th>Score</th>
+                        <th>Streak</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model.Users)
+                    {
+                        <tr>
+                            <td>#@u.Id</td>
+                            <td><strong>@u.Username</strong></td>
+                            <td>@u.Email</td>
+                            <td>@(string.IsNullOrEmpty(u.Address) ? "—" : u.Address)</td>
+                            <td><span class="country-tag">📍 @(string.IsNullOrEmpty(u.Country) ? "Global" : u.Country)</span></td>
+                            <td><span class="role-pill @(u.Role == "Administrator" ? "role-admin" : "role-learner")">@u.Role</span></td>
+                            <td><strong class="score-color">@u.TotalScore pts</strong></td>
+                            <td>🔥 @u.CurrentStreak</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form method="post" asp-action="ToggleUserRole" asp-route-id="@u.Id" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-action" title="Toggle Admin/Learner">
+                                            @(u.Role == "Administrator" ? "Demote" : "Make Admin")
+                                        </button>
+                                    </form>
+
+                                    <form method="post" asp-action="DeleteUser" asp-route-id="@u.Id" style="display:inline;" onsubmit="return confirm('Permanently delete user @u.Username?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-action btn-danger" title="Delete User">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 2: QUESTIONS MANAGEMENT -->
+    <div id="questionsTab" class="tab-pane" style="display:none;">
+        <div class="section-title">
+            <h2>Add & Manage Questions</h2>
+            <p>Create new quiz challenges with explanations to expand the learning database.</p>
+        </div>
+
+        <!-- Add Question Card -->
+        <div class="card form-container-card" style="margin-bottom: 25px;">
+            <h3>➕ Add New Quiz Question</h3>
+            <form method="post" asp-action="AddQuestion" class="admin-question-form">
+                @Html.AntiForgeryToken()
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Language / Topic</label>
+                        <select name="Language" required>
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="HTML">HTML</option>
+                            <option value="CSS">CSS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Difficulty</label>
+                        <select name="Difficulty">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correct Option</label>
+                        <select name="CorrectOption" required>
+                            <option value="A">Option A</option>
+                            <option value="B">Option B</option>
+                            <option value="C">Option C</option>
+                            <option value="D">Option D</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Question Text</label>
+                    <textarea name="QuestionText" rows="2" placeholder="e.g. Which keyword is used to declare an immutable constant?" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Option A</label>
+                        <input name="OptionA" placeholder="Option A text" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Option B</label>
+                        <input name="OptionB" placeholder="Option B text" required />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Option C</label>
+                        <input name="OptionC" placeholder="Option C text" />
+                    </div>
+                    <div class="form-group">
+                        <label>Option D</label>
+                        <input name="OptionD" placeholder="Option D text" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Explanation / Rationale</label>
+                    <input name="Explanation" placeholder="Explanation displayed when reviewing answers..." />
+                </div>
+
+                <button type="submit" class="button primary">Save Question to Database</button>
+            </form>
+        </div>
+
+        <!-- Questions List Table -->
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Topic</th>
+                        <th>Diff</th>
+                        <th>Question</th>
+                        <th>Correct</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var q in Model.Questions)
+                    {
+                        <tr>
+                            <td>#@q.Id</td>
+                            <td><span class="topic-tag">@q.Language</span></td>
+                            <td><span class="diff-tag">@q.Difficulty</span></td>
+                            <td style="max-width: 400px;">@q.QuestionText</td>
+                            <td><span class="correct-badge">@q.CorrectOption</span></td>
+                            <td>
+                                <form method="post" asp-action="DeleteQuestion" asp-route-id="@q.Id" onsubmit="return confirm('Delete this question?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-action btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 3: QUIZ ATTEMPTS -->
+    <div id="attemptsTab" class="tab-pane" style="display:none;">
+        <div class="section-title">
+            <h2>Recent Quiz Telemetry</h2>
+            <p>Live feed of quiz evaluations and learner participation.</p>
+        </div>
+
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Attempt ID</th>
+                        <th>Topic</th>
+                        <th>Score</th>
+                        <th>Questions</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.RecentAttempts)
+                    {
+                        <tr>
+                            <td>#@a.Id</td>
+                            <td><strong>@a.Language</strong></td>
+                            <td><span class="score-pill">@a.Score pts</span></td>
+                            <td>@a.TotalQuestions questions</td>
+                            <td class="text-muted">@a.AttemptedAt.ToLocalTime().ToString("MMM dd, yyyy HH:mm:ss")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function switchTab(evt, tabId) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+</script>
+}

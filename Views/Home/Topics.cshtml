@@ -1,0 +1,38 @@
+<section class="page-head">
+    <span class="auth-tag">CURRICULUM</span>
+    <h1>Programming Topics</h1>
+    <p>Select any language below to challenge yourself with timed questions or learn concepts with AI hints.</p>
+</section>
+
+<section class="section">
+    <div class="grid three">
+        @{
+            var topicsList = new[] {
+                (Name: "Python", Icon: "🐍", Level: "Beginner to Intermediate", Questions: "5+ Questions", Desc: "Variables, list comprehensions, tuples, dictionaries, generator functions, and clean Pythonic idioms."),
+                (Name: "JavaScript", Icon: "⚡", Level: "Beginner to Intermediate", Questions: "5+ Questions", Desc: "ES6 syntax, closures, event loop, Promise.all, modern DOM manipulation, and asynchronous patterns."),
+                (Name: "Java", Icon: "☕", Level: "Beginner to Intermediate", Questions: "5+ Questions", Desc: "Class inheritance, interface contracts, collections (List, Set, Map), and JVM fundamentals."),
+                (Name: "C++", Icon: "⚙", Level: "Beginner to Intermediate", Questions: "5+ Questions", Desc: "Pointers, memory addresses, dynamic allocation with new/delete, header includes, and templates."),
+                (Name: "HTML", Icon: "🌐", Level: "Beginner to Intermediate", Questions: "5+ Questions", Desc: "Semantic HTML5 tags, accessible image attributes, form controls, structure, and web best practices."),
+                (Name: "CSS", Icon: "🎨", Level: "Beginner to Intermediate", Questions: "5+ Questions", Desc: "Flexbox alignment, Grid systems, specificity rules, color models, box model, and modern UI design.")
+            };
+        }
+
+        @foreach (var t in topicsList)
+        {
+            <article class="card topic-full-card">
+                <div class="topic-full-header">
+                    <div class="topic-icon-badge large">@t.Icon</div>
+                    <div>
+                        <h3>@t.Name</h3>
+                        <span class="diff-tag">@t.Level</span>
+                    </div>
+                </div>
+                <p class="topic-full-desc">@t.Desc</p>
+                <div class="topic-full-footer">
+                    <span class="q-count">@t.Questions</span>
+                    <a href="/Dashboard/Quiz?language=@Uri.EscapeDataString(t.Name)" class="button primary compact">Take Quiz →</a>
+                </div>
+            </article>
+        }
+    </div>
+</section>

@@ -1,0 +1,137 @@
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">LEARN • CHALLENGE • PROGRESS</span>
+        <h1 class="hero-title">Turn coding practice into an epic <span>quest.</span></h1>
+        <p class="lead">
+            Challenge yourself with interactive timed quizzes, build unbreakable daily streaks, earn unlockable badges, and learn with an AI-powered tutor.
+        </p>
+        <div class="actions">
+            @if (Context.Session.GetInt32("UserId") != null)
+            {
+                <a class="button primary" href="/Dashboard">Open Your Dashboard →</a>
+                <a class="button secondary" href="/Community">View Leaderboard 🏆</a>
+            }
+            else
+            {
+                <a class="button primary" href="/Account/Register">Start Your Quest Free →</a>
+                <a class="button secondary" href="/Account/Login">Log In</a>
+                <a class="button secondary" href="/Community">View Leaderboard 🏆</a>
+            }
+        </div>
+    </div>
+    <div class="quest-card hero-card">
+        <div class="orb">CQ</div>
+        <h3>Today's Daily Challenge</h3>
+        <p>Test your knowledge across Python, JavaScript, Java, C++, HTML, and CSS. Maintain your habit today!</p>
+        <div class="stats">
+            <div>
+                <b>6+</b>
+                <small>Languages</small>
+            </div>
+            <div>
+                <b>100%</b>
+                <small>LocalDB Connected</small>
+            </div>
+            <div>
+                <b>30+</b>
+                <small>Questions</small>
+            </div>
+            <div>
+                <b>5+</b>
+                <small>Earnable Badges</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Languages Grid -->
+<section class="section">
+    <div class="section-heading-centered">
+        <span class="eyebrow">SUPPORTED TECHNOLOGIES</span>
+        <h2>Master Popular Languages</h2>
+        <p>From fundamental web development to systems engineering and backend languages.</p>
+    </div>
+
+    <div class="grid three topics-preview">
+        @{
+            var languages = new[] {
+                ("Python", "Functions, data structures, generator expressions, and modules.", "🐍"),
+                ("JavaScript", "Modern ES6+, DOM manipulation, closures, and promises.", "⚡"),
+                ("Java", "Object-oriented principles, JVM memory, and collections.", "☕"),
+                ("C++", "Pointers, memory management, references, and templates.", "⚙"),
+                ("HTML", "Semantic elements, forms, accessibility, and structures.", "🌐"),
+                ("CSS", "Flexbox, Grid, animations, and responsive styling.", "🎨")
+            };
+        }
+
+        @foreach (var (lang, desc, icon) in languages)
+        {
+            <div class="card topic-spotlight">
+                <div class="topic-spotlight-top">
+                    <span class="spotlight-icon">@icon</span>
+                    <span class="spotlight-lang">@lang</span>
+                </div>
+                <p>@desc</p>
+                <a href="/Dashboard/Quiz?language=@Uri.EscapeDataString(lang)" class="topic-link">Take Quiz →</a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Why CodeQuest Section -->
+<section class="section alt-bg">
+    <div class="section-heading-centered">
+        <span class="eyebrow">WHY CODEQUEST?</span>
+        <h2>Built for Learners Who Want Real Results</h2>
+    </div>
+
+    <div class="grid three">
+        <article class="card feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Interactive Timed Quizzes</h3>
+            <p>Test your intuition under timed conditions with instant answer explanations to solidify your understanding.</p>
+        </article>
+
+        <article class="card feature-card">
+            <div class="feature-icon">🔥</div>
+            <h3>Streak Tracking & Rewards</h3>
+            <p>Every day you practice increments your streak in the database. Unlock achievements like First Quest and Perfect Score.</p>
+        </article>
+
+        <article class="card feature-card">
+            <div class="feature-icon">✦</div>
+            <h3>Local AI Tutor Guidance</h3>
+            <p>Stuck on a tricky question? Ask the AI tutor for a hint that explains the logic without giving away the answer.</p>
+        </article>
+
+        <article class="card feature-card">
+            <div class="feature-icon">💾</div>
+            <h3>LocalDB Database Integration</h3>
+            <p>All users, quizzes, attempts, and streaks are safely persisted in Microsoft SQL Server LocalDB with secure PBKDF2 hashing.</p>
+        </article>
+
+        <article class="card feature-card">
+            <div class="feature-icon">🏆</div>
+            <h3>Global Leaderboard</h3>
+            <p>Compete with learners across countries and climb from beginner to Code Master rank.</p>
+        </article>
+
+        <article class="card feature-card">
+            <div class="feature-icon">🛡</div>
+            <h3>Administrator Console</h3>
+            <p>Full CRUD tools to manage question banks, promote users, inspect telemetry, and sync reference databases.</p>
+        </article>
+    </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="cta-banner">
+    <div class="cta-inner">
+        <h2>Ready to prove your skills?</h2>
+        <p>Join CodeQuest today and take your first step towards programming mastery.</p>
+        <div class="actions center">
+            <a href="/Account/Register" class="button primary">Get Started Now — It's Free</a>
+            <a href="/Home/Topics" class="button secondary">Browse All Topics</a>
+        </div>
+    </div>
+</section>

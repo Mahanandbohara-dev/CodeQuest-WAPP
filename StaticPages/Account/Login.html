@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CodeQuest • Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/site.css" />
+</head>
+<body>
+    <!-- Include layout header/footer -->
+    <header class="nav">
+        <a class="brand" href="/">
+            <span class="brand-icon">CQ</span>
+            <span class="brand-text">CodeQuest</span>
+            <span class="brand-dot"></span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/Home/Topics" class="nav-item">Topics</a>
+            <a href="/Community" class="nav-item">Leaderboard</a>
+            <a href="/Home/About" class="nav-item">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="/Account/Login" class="nav-item">Log in</a>
+            <a href="/Account/Register" class="button primary compact">Get Started</a>
+        </div>
+    </header>
+    <main class="main-content">
+        <section class="auth-card">
+            <h2>Log In</h2>
+            <form action="/Account/Login" method="post">
+                <div class="form-group">
+                    <label for="identifier">Username or Email</label>
+                    <input type="text" id="identifier" name="Identifier" placeholder="Enter username or email" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="Password" placeholder="Enter password" required />
+                </div>
+                <div class="form-group inline">
+                    <input type="checkbox" id="rememberMe" name="RememberMe" value="true" />
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <button type="submit" class="button primary">Log In</button>
+            </form>
+            <p class="auth-hint">Demo account: <strong>admin</strong> / <strong>Admin@123</strong></p>
+            <p class="auth-link">Don't have an account? <a href="/Account/Register">Register here</a></p>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="brand footer-brand">
+                    <span class="brand-icon">CQ</span>
+                    <span>CodeQuest</span>
+                </div>
+                <p>Interactive programming learning platform connecting database-driven quizzes, progress tracking, and AI tutoring.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Explore</h4>
+                <a href="/Home/Topics">Programming Topics</a>
+                <a href="/Community">Community Leaderboard</a>
+                <a href="/Home/About">Our Mission</a>
+            </div>
+            <div class="footer-col">
+                <h4>Languages</h4>
+                <div class="footer-tags">
+                    <span>Python</span><span>JavaScript</span><span>Java</span>
+                    <span>C++</span><span>HTML</span><span>CSS</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 CodeQuest. Connected to SQL Server LocalDB. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="../../js/site.js"></script>
+</body>
+</html>

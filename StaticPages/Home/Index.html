@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CodeQuest • Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/site.css" />
+</head>
+<body>
+    <!-- Include layout header/footer -->
+    <header class="nav">
+        <a class="brand" href="/">
+            <span class="brand-icon">CQ</span>
+            <span class="brand-text">CodeQuest</span>
+            <span class="brand-dot"></span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/Home/Topics" class="nav-item">Topics</a>
+            <a href="/Community" class="nav-item">Leaderboard</a>
+            <a href="/Home/About" class="nav-item">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="/Account/Login" class="nav-item">Log in</a>
+            <a href="/Account/Register" class="button primary compact">Get Started</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="hero">
+            <h1>Master Coding by Doing</h1>
+            <p>Interactive quizzes, real‑time feedback, and AI‑powered hints to accelerate your programming journey.</p>
+            <a href="/Account/Register" class="button primary">Start Learning</a>
+        </section>
+        <section class="features">
+            <div class="feature-card">
+                <h3>Topic‑Based Quizzes</h3>
+                <p>Choose from Python, JavaScript, Java, C++, HTML, CSS and more.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Progress Tracking</h3>
+                <p>Earn badges, track streaks, and view detailed results.</p>
+            </div>
+            <div class="feature-card">
+                <h3>AI Tutor</h3>
+                <p>Ask for hints on tricky questions instantly.</p>
+            </div>
+        </section>
+        <section class="topic-grid">
+            <a href="/Dashboard/Quiz" class="topic-card">Python</a>
+            <a href="/Dashboard/Quiz" class="topic-card">JavaScript</a>
+            <a href="/Dashboard/Quiz" class="topic-card">Java</a>
+            <a href="/Dashboard/Quiz" class="topic-card">C++</a>
+            <a href="/Dashboard/Quiz" class="topic-card">HTML</a>
+            <a href="/Dashboard/Quiz" class="topic-card">CSS</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="brand footer-brand">
+                    <span class="brand-icon">CQ</span>
+                    <span>CodeQuest</span>
+                </div>
+                <p>Interactive programming learning platform connecting database-driven quizzes, progress tracking, and AI tutoring.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Explore</h4>
+                <a href="/Home/Topics">Programming Topics</a>
+                <a href="/Community">Community Leaderboard</a>
+                <a href="/Home/About">Our Mission</a>
+            </div>
+            <div class="footer-col">
+                <h4>Languages</h4>
+                <div class="footer-tags">
+                    <span>Python</span><span>JavaScript</span><span>Java</span>
+                    <span>C++</span><span>HTML</span><span>CSS</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 CodeQuest. Connected to SQL Server LocalDB. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="../js/site.js"></script>
+</body>
+</html>

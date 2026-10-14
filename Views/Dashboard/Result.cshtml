@@ -1,0 +1,83 @@
+@model QuizResultViewModel
+
+<div class="result-container">
+    <div class="result-hero-card">
+        <div class="result-orb @(Model.CorrectCount > 0 ? "success" : "neutral")">
+            @(Model.PerfectScore ? "👑" : (Model.CorrectCount > 0 ? "✓" : "⚡"))
+        </div>
+
+        <h1>@(Model.PerfectScore ? "Outstanding! Perfect Score!" : (Model.CorrectCount > 0 ? "Great Effort!" : "Keep Practicing!"))</h1>
+        
+        <p class="result-summary">
+            You answered <strong>@Model.CorrectCount</strong> out of <strong>@Model.TotalQuestions</strong> questions correctly.
+        </p>
+
+        <div class="result-points-pill">
+            <span class="pts-label">Total Points Earned:</span>
+            <span class="pts-val">+@Model.Score pts</span>
+        </div>
+
+        @if (Model.UnlockedBadges != null && Model.UnlockedBadges.Count > 0)
+        {
+            <div class="badges-unlocked-banner">
+                <h3>🎉 Achievement Unlocked!</h3>
+                <div class="unlocked-list">
+                    @foreach (var badge in Model.UnlockedBadges)
+                    {
+                        <span class="unlocked-chip">@badge</span>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="result-actions">
+            <a href="/Dashboard" class="button primary">Go to Dashboard →</a>
+            <a href="/Dashboard/Quiz?language=@Uri.EscapeDataString(Model.Language)" class="button secondary">Retake @Model.Language Quiz</a>
+            <a href="/Community" class="button secondary">Check Leaderboard 🏆</a>
+        </div>
+    </div>
+
+    <!-- Review Answers Breakdown -->
+    <div class="result-review-section">
+        <h2>Detailed Review & Explanations</h2>
+        <p>Review the reasoning for each question to reinforce your learning.</p>
+
+        <div class="review-list">
+            @for (int i = 0; i < Model.Reviews.Count; i++)
+            {
+                var r = Model.Reviews[i];
+                <div class="review-card @(r.IsCorrect ? "review-correct" : "review-incorrect")">
+                    <div class="review-header">
+                        <span class="review-badge @(r.IsCorrect ? "badge-correct" : "badge-incorrect")">
+                            @(r.IsCorrect ? "✓ Correct" : "× Incorrect")
+                        </span>
+                        <span class="review-num">Question @(i + 1)</span>
+                    </div>
+
+                    <h3 class="review-question">@r.Question</h3>
+
+                    <div class="review-answers">
+                        <div class="ans-row">
+                            <span class="ans-label">Your Answer:</span>
+                            <span class="ans-val @(r.IsCorrect ? "text-green" : "text-red")">Option @r.SelectedOption</span>
+                        </div>
+                        @if (!r.IsCorrect)
+                        {
+                            <div class="ans-row">
+                                <span class="ans-label">Correct Answer:</span>
+                                <span class="ans-val text-green">Option @r.CorrectOption</span>
+                            </div>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(r.Explanation))
+                    {
+                        <div class="review-explanation">
+                            <strong>Explanation:</strong> @r.Explanation
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

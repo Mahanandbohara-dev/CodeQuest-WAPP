@@ -1,0 +1,231 @@
+@model UserProfileViewModel
+
+<div class="dashboard-page">
+    <!-- Welcome Header & Profile Card -->
+    <section class="profile-banner">
+        <div class="profile-info">
+            <div class="profile-avatar">
+                @(string.IsNullOrEmpty(Model.Username) ? "U" : Model.Username.Substring(0, 1).ToUpper())
+            </div>
+            <div class="profile-details">
+                <div class="profile-badges">
+                    <span class="role-badge @(Model.Role == "Administrator" ? "admin" : "learner")">@Model.Role</span>
+                    @if (!string.IsNullOrEmpty(Model.Country))
+                    {
+                        <span class="country-tag">📍 @Model.Country</span>
+                    }
+                </div>
+                <h1>Welcome back, @Model.Username!</h1>
+                <p class="profile-meta">
+                    <span>✉ @Model.Email</span>
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <span>• 🏠 @Model.Address</span>
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="profile-actions">
+            <a href="/Ai/Chat" class="button primary compact">🤖 AI Tutor Chat</a>
+            <a href="/Dashboard/EditProfile" class="button secondary compact">✏️ Edit Profile</a>
+            <a href="/Dashboard/Games" class="button secondary compact">🎮 Mini-Games</a>
+            <a href="/Home/Topics" class="button secondary compact">Explore Topics</a>
+            <a href="/Community" class="button secondary compact">Leaderboard 🏆</a>
+        </div>
+    </section>
+
+    <!-- Interactive Hub Quick Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <a href="/Dashboard/Games" class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; border-color: rgba(96, 165, 250, 0.4); background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%); transition: transform 0.2s, border-color 0.2s;">
+            <div style="font-size: 2.2rem; background: rgba(59, 130, 246, 0.15); border-radius: 12px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">🎮</div>
+            <div>
+                <strong style="color: #f8fafc; font-size: 1.05rem; display: block;">Relaxing Mini-Games</strong>
+                <span style="font-size: 0.82rem; color: #94a3b8;">Memory Match & 8-Puzzle</span>
+            </div>
+        </a>
+
+        <a href="/Dashboard/EditProfile" class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; border-color: rgba(52, 211, 153, 0.4); background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%); transition: transform 0.2s, border-color 0.2s;">
+            <div style="font-size: 2.2rem; background: rgba(16, 185, 129, 0.15); border-radius: 12px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">✏️</div>
+            <div>
+                <strong style="color: #f8fafc; font-size: 1.05rem; display: block;">Edit Your Profile</strong>
+                <span style="font-size: 0.82rem; color: #94a3b8;">Email, location & country</span>
+            </div>
+        </a>
+
+        <a href="/Ai/Chat" class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; border-color: rgba(168, 85, 247, 0.4); background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%); transition: transform 0.2s, border-color 0.2s;">
+            <div style="font-size: 2.2rem; background: rgba(168, 85, 247, 0.15); border-radius: 12px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">🤖</div>
+            <div>
+                <strong style="color: #f8fafc; font-size: 1.05rem; display: block;">AI Coding Tutor</strong>
+                <span style="font-size: 0.82rem; color: #94a3b8;">Ask questions & debug</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Stats Highlights -->
+    <section class="stats-grid">
+        <article class="stat-card">
+            <div class="stat-icon streak-icon">🔥</div>
+            <div class="stat-content">
+                <small>Current Streak</small>
+                <strong>@Model.CurrentStreak <span>days</span></strong>
+                <p class="stat-sub">Keep active daily to build habits</p>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon score-icon">⭐</div>
+            <div class="stat-content">
+                <small>Total Score</small>
+                <strong>@Model.TotalScore <span>pts</span></strong>
+                <p class="stat-sub">Earn 10 points per correct answer</p>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon badge-icon">🏅</div>
+            <div class="stat-content">
+                <small>Badges Unlocked</small>
+                <strong>@Model.Badges.Count <span>earned</span></strong>
+                <p class="stat-sub">Unlock special achievements</p>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon quiz-icon">⚡</div>
+            <div class="stat-content">
+                <small>Quizzes Taken</small>
+                <strong>@Model.RecentAttempts.Count <span>sessions</span></strong>
+                <p class="stat-sub">Tracked in your history</p>
+            </div>
+        </article>
+    </section>
+
+    <!-- Main Content Layout -->
+    <div class="dashboard-columns">
+        <!-- Left: Quiz Topics Launcher -->
+        <div class="dashboard-main">
+            <div class="section-title">
+                <h2>Start a Challenge</h2>
+                <p>Choose a programming language and challenge yourself with interactive timed questions.</p>
+            </div>
+
+            <div class="topics-grid">
+                @{
+                    var topics = new[] {
+                        (Name: "Python", Desc: "Data structures, functions, & syntax", Icon: "🐍", Color: "#3776ab"),
+                        (Name: "JavaScript", Desc: "ES6+, DOM, promises, & events", Icon: "⚡", Color: "#f7df1e"),
+                        (Name: "Java", Desc: "OOP, collections, & JVM architecture", Icon: "☕", Color: "#ea2d2e"),
+                        (Name: "C++", Desc: "Pointers, memory, STL, & templates", Icon: "⚙", Color: "#00599c"),
+                        (Name: "HTML", Desc: "Semantic markup, elements, & web layout", Icon: "🌐", Color: "#e34f26"),
+                        (Name: "CSS", Desc: "Flexbox, grid, styling, & selectors", Icon: "🎨", Color: "#264de4")
+                    };
+                }
+
+                @foreach (var t in topics)
+                {
+                    <a class="topic-card" href="/Dashboard/Quiz?language=@Uri.EscapeDataString(t.Name)">
+                        <div class="topic-header">
+                            <span class="topic-icon-badge">@t.Icon</span>
+                            <span class="topic-arrow">→</span>
+                        </div>
+                        <h3>@t.Name</h3>
+                        <p>@t.Desc</p>
+                        <span class="topic-action">Start Quiz (5 Questions)</span>
+                    </a>
+                }
+            </div>
+
+            <!-- Recent Quiz History -->
+            <div class="section-title history-title">
+                <h2>Recent Activity</h2>
+                <p>Your latest quiz submissions recorded in the database.</p>
+            </div>
+
+            @if (Model.RecentAttempts.Count == 0)
+            {
+                <div class="empty-state">
+                    <p>No quiz attempts recorded yet. Pick a language above to earn your first score and badge!</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Score</th>
+                                <th>Questions</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var att in Model.RecentAttempts)
+                            {
+                                <tr>
+                                    <td><strong>@att.Language</strong></td>
+                                    <td><span class="score-pill">@att.Score pts</span></td>
+                                    <td>@att.TotalQuestions questions</td>
+                                    <td class="text-muted">@att.AttemptedAt.ToLocalTime().ToString("MMM dd, yyyy HH:mm")</td>
+                                    <td>
+                                        @if (att.Score == att.TotalQuestions * 10)
+                                        {
+                                            <span class="status-tag status-perfect">Perfect 100%</span>
+                                        }
+                                        else if (att.Score > 0)
+                                        {
+                                            <span class="status-tag status-pass">Completed</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-tag status-fail">Try Again</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <!-- Right: Badges Showcase & Profile Info -->
+        <aside class="dashboard-sidebar">
+            <div class="card badge-card">
+                <h3>Unlocked Badges</h3>
+                <p class="card-desc">Recognizing your key learning milestones.</p>
+
+                @if (Model.Badges.Count == 0)
+                {
+                    <div class="empty-badges">
+                        <span class="empty-icon">🎯</span>
+                        <p>Complete your first quiz session to unlock the <strong>First Quest</strong> badge!</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="badges-list">
+                        @foreach (var b in Model.Badges)
+                        {
+                            <div class="badge-item">
+                                <span class="badge-emoji">@b.Icon</span>
+                                <div class="badge-text">
+                                    <strong>@b.Name</strong>
+                                    <small>@b.Description</small>
+                                    <span class="badge-date">Earned @b.EarnedAt.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Learning Streak Tips -->
+            <div class="card tip-card">
+                <h3>💡 Habit Tip</h3>
+                <p>Taking just 5 minutes a day to solve a coding quiz builds long-term programming intuition. Come back tomorrow to keep your @Model.CurrentStreak-day streak going!</p>
+            </div>
+        </aside>
+    </div>
+</div>
